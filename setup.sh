@@ -1,157 +1,42 @@
 #!/usr/bin/env bash
 
 brews=(
-  android-platform-tools
-  archey
-  aws-shell
-  chainsawbaby/formula/bash-snippets
-  cheat
-  coreutils
-  dfc
-  findutils
-  fontconfig --universal
-  fpp
-  fzf
+  cf-cli
   git
-  bash-completion
-  git-extras
-  git-fresh
-  git-lfs
-  gnuplot --with-qt
-  gnu-sed --with-default-names
+  gradle
   go
   hh
   htop
-  httpie
-  iftop
   imagemagick --with-webp
-  lighttpd
-  lnav
-  mackup
-  macvim
-  mas
-  micro
-  moreutils
-  mtr
-  ncdu
-  nmap
+  maven
+  neofetch
   node
-  poppler
-  postgresql
-  pgcli
-  pv
+  openssl@1.1
   python
   python3
-  osquery
+  ruby
   scala
-  sbt
-  stormssh
-  thefuck
-  tmux
-  tree
-  trash
-  vim --with-override-system-vi
-  wget --with-iri
+  wget
+  yarn
 )
 
 casks=(
   adobe-reader
-  airdroid
-  cakebrew
-  cleanmymac
-  commander-one
+  atom
+  datagrip
+  dbvisualizer
   docker
-  dropbox
   firefox
-  geekbench
   google-chrome
-  google-drive
-  github-desktop
-  hosts
-  handbrake
-  hyper
-  istat-menus
-  istat-server  
-  launchrocket
-  licecap
+  google-backup-and-sync
+  intellij-idea
   jetbrains-toolbox
-  betterzipql
-  qlcolorcode
-  qlmarkdown
-  qlstephen
-  quicklook-json
-  quicklook-csv
-  macdown
-  microsoft-office
-  plex-home-theater
-  plex-media-server
-  private-eye
-  satellite-eyes
-  sidekick
-  skype
+  onedrive
   slack
-  sling
-  spotify
-  steam
-  teleport
-  transmission
-  transmission-remote-gui
-  tunnelbear
-  visual-studio-code
-  vlc
-  volumemixer
+  sts
+  virtualbox
+  virtualbox-extension-pac
   webstorm
-  xquartz
-)
-
-pips=(
-  pip
-  glances
-  ohmu
-  pythonpy
-)
-
-gems=(
-  bundle
-)
-
-npms=(
-  fenix-cli
-  gitjk
-  kill-tabs
-  n
-  nuclide-installer
-)
-
-gpg_key='3E219504'
-git_configs=(
-  "branch.autoSetupRebase always"
-  "color.ui auto"
-  "core.autocrlf input"
-  "core.pager cat"
-  "credential.helper osxkeychain"
-  "merge.ff false"
-  "pull.rebase true"
-  "push.default simple"
-  "rebase.autostash true"
-  "rerere.autoUpdate true"
-  "rerere.enabled true"
-  "user.name pathikrit"
-  "user.email pathikritbhowmick@msn.com"
-  "user.signingkey ${gpg_key}"
-)
-
-vscode=(
-  donjayamanne.python
-  dragos.scala-lsp
-  lukehoban.Go
-  ms-vscode.cpptools
-  rebornix.Ruby
-  redhat.java
-)
-
-fonts=(
-  font-source-code-pro
 )
 
 ######################################## End of app list ########################################
@@ -174,7 +59,6 @@ else
   brew upgrade
 fi
 brew doctor
-brew tap homebrew/dupes
 
 function install {
   cmd=$1
@@ -203,24 +87,16 @@ ruby -v
 sudo gem update --system
 
 prompt "Install Java"
-brew cask install java
+brew tap caskroom/versions
+brew cask install java8
 
 prompt "Install packages"
 brew info ${brews[@]}
 install 'brew install' ${brews[@]}
 
 prompt "Install software"
-brew tap caskroom/versions
 brew cask info ${casks[@]}
 install 'brew cask install' ${casks[@]}
-
-prompt "Installing secondary packages"
-install 'pip install --upgrade' ${pips[@]}
-install 'gem install' ${gems[@]}
-install 'npm install --global' ${npms[@]}
-install 'code --install-extension' ${vscode[@]}
-brew tap caskroom/fonts
-install 'brew cask install' ${fonts[@]}
 
 prompt "Upgrade bash"
 brew install bash
@@ -231,23 +107,13 @@ mv ~/.gitconfig ~/.gitconfig_backup
 cd; curl -#L https://github.com/barryclark/bashstrap/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,screenshot.png}
 #source ~/.bash_profile
 
-prompt "Set git defaults"
-for config in "${git_configs[@]}"
-do
-  git config --global ${config}
-done
-gpg --keyserver hkp://pgp.mit.edu --recv ${gpg_key}
 
-prompt "Install mac CLI [NOTE: Say NO to bash-completions since we have fzf]!"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/guarinogabriel/mac-cli/master/mac-cli/tools/install)"
 
 prompt "Update packages"
 pip3 install --upgrade pip setuptools wheel
-mac update
 
 prompt "Cleanup"
 brew cleanup
 brew cask cleanup
 
-read -p "Run `mackup restore` after DropBox has done syncing ..."
 echo "Done!"
